@@ -31,7 +31,14 @@ State int_to_state(int s){
 
 //function to convert action to string for output
 char* action_to_string(Action a){
-
+	if (a == 0)
+		return "H";
+	else if (a == 1)
+		return "SP";
+	else if (a == 2)
+		return "S";
+	else
+		return "D";
 }
 
 //transition function, returns value in interval [0,1]
@@ -41,7 +48,7 @@ double transition(State initial, Action a, State final){
 
 //reward function for taking stand or double on a given state
 double reward(State s, Action a){
-
+	
 }
 
 //returns V'(s) using previousy computed state values
