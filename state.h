@@ -9,6 +9,8 @@ public:
 	int value;
 	//dealer's card
 	int dealer;
+	//if it is the initial state or not, 0 << initial, 1 << not
+	int initial;
 };
 
 #endif

@@ -8,9 +8,9 @@
 #include <random>
 #include <ctime>
 #include "./state.h"
-#include "./action.h"
 
 using namespace std;
+typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
 
 //global variables
 double P;
@@ -21,6 +21,11 @@ Action OPT_ACTIONS[NUM_STATES];
 
 //function to convert state to int for indexing into array
 int state_to_int(State s){
+
+}
+
+//function to convert integer to state
+State int_to_state(int s){
 
 }
 
@@ -41,7 +46,20 @@ double reward(State s, Action a){
 
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
-
+	double max_val = -100.0;
+	Action a;
+	for(a = 0; a < 2; a++){
+		double sum = 0.0;
+		for(int state = 0; state < NUM_STATES; state++){
+			State s1 = int_to_state(state);
+			sum += transition(s, a, s1)*VALUES[state];
+		}
+		max_val = max(max_val, sum);
+	}
+	double val_stand = reward(s, 3);	
+	double val_double = reward(s, 4);
+	max_val = max(max_val, val_stand);
+	max_val = max(max_val, val_double);
 }
 
 //function to set OPT_ACTIONS for each state
