@@ -54,19 +54,33 @@ double reward(State s, Action a){
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
 	double max_val = -100.0;
-	Action a;
-	for(a = 0; a < 2; a++){
-		double sum = 0.0;
+	/* calculating V_n(s) for split */
+	double val_split;
+	int sum_split 0.0;
+	if(s.typeState == 2){
+		//init_split = s.value/2;
 		for(int state = 0; state < NUM_STATES; state++){
 			State s1 = int_to_state(state);
-			sum += transition(s, a, s1)*VALUES[state];
+			sum_split += transition(s, 1, s1)*VALUES[state];
 		}
-		max_val = max(max_val, sum);
 	}
-	double val_stand = reward(s, 3);	
+	val_split = sum_split*2 - 1;
+	/* calculating V_n(s) for hit */
+	double val_hit;
+	double sum = 0.0;
+	for(int state = 0; state < NUM_STATES; state++){
+		State s1 = int_to_state(state);
+		sum += transition(s, 0, s1)*VALUES[state];
+	}
+	val_hit = sum;
+	/* calculating V_n(s) for stand */
+	double val_stand = reward(s, 3);
+	/* calculating V_n(s) for double */	
 	double val_double = reward(s, 4);
+
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
+	return max_val;
 }
 
 //function to set OPT_ACTIONS for each state
