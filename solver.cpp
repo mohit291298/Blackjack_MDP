@@ -62,6 +62,12 @@ double transition(State initial, Action a, State final){
 		    case 0: // when original is a hard hand;
 		    	if(final.typeState == 0){
 		    		int diff = final.value - initial.value;
+		    		if (diff <= 0){
+		    			return 0.0;
+		    		}
+		    		if(diff == 10){
+		    			return P_face;
+		    		}
 		    	}
 		        break;
 		    case 2: // code to be executed if n = 2;
