@@ -14,6 +14,7 @@ typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
 
 //global variables
 double P;
+double P_face, P_non_face;
 int NUM_STATES;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
@@ -44,7 +45,31 @@ char* action_to_string(Action a){
 
 //transition function, returns value in interval [0,1]
 double transition(State initial, Action a, State final){
-
+	if (a == 2 || a == 3){
+		cout << "Error : transition";
+		return 0.0;
+	}
+	if(initial.dealer != final.dealer || final.start == 0){
+		return 0.0;
+	}
+	//for hit action
+	if(a == 0){
+		//after hit, start = 2 and final state cannot be a pair
+		if(final.start != 2 || final.typeState == 2){
+			return 0.0;
+		}
+		switch (initial.typeState)
+		{
+		    case 0: // when original is a hard hand;
+		    	if(final.typeState == 0){
+		    		int diff = final.value - initial.value;
+		    	}
+		        break;
+		    case 2: // code to be executed if n = 2;
+		        break;
+		    default: // code to be executed if n doesn't match any cases
+		}
+	}
 }
 
 double calc_ways_to_sum(){

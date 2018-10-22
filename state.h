@@ -9,8 +9,16 @@ public:
 	int value;
 	//dealer's face up card
 	int dealer;
-	//if it is the initial state or not, 0 << initial, 1 << not
-	int initial;
+	//if it is the start state or not, 0 << initial, 1 << after split (non Ace), 2 << others
+	int start;
+
+	//constructor
+	State(int typeState, int value, int dealer, int initial){
+		this->typeState = typeState;
+		this->value = value;
+		this->dealer = dealer;
+		this->initial = initial;
+	}
 };
 
 #endif
