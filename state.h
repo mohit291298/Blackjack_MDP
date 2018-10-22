@@ -13,11 +13,11 @@ public:
 	int start;
 
 	//constructor
-	State(int typeState, int value, int dealer, int initial){
+	State(int typeState, int value, int dealer, int start){
 		this->typeState = typeState;
 		this->value = value;
 		this->dealer = dealer;
-		this->initial = initial;
+		this->start = start;
 	}
 };
 

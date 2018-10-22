@@ -18,7 +18,6 @@ double P_face, P_non_face;
 int NUM_STATES;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
-double P_face,P_non_face;
 double ways_to_sum[22];
 
 //function to convert state to int for indexing into array
@@ -148,9 +147,9 @@ double bellmanBackup(State s){
 	}
 	val_hit = sum;
 	/* calculating V_n(s) for stand */
-	double val_stand = reward(s, 3);
+	double val_stand = reward(s, 2);
 	/* calculating V_n(s) for double */	
-	double val_double = reward(s, 4);
+	double val_double = reward(s, 3);
 
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
