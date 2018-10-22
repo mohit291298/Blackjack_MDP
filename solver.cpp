@@ -337,35 +337,43 @@ double reward(State s, Action a){
 		if(s.dealer !=1){
 			if(act_val<17){
 				//assuming dealer does not have A
-
+				//The dealer has to just not get busted to win
 				return -(2*calc_non_bust(diff_down,diff_up) -1);
 			}
 			else if(act_val<=21){
+				// The dealer has to prevent busting and also to get more than us
+				//More than us case
 				diff_down = act_val - s.dealer + 1;
 				for(int i=diff_down;i<=diff_up;i++){
 					to_return = to_return - compute_reward(17-s.dealer,i);
 				}
+				//Less than us case
 				for(int i = 17-s.dealer;i<=(act_val - s.dealer - 1);i++){
 					to_return = to_return + compute_reward(17-s.dealer,i)
 				}
+				//Busted also added
 				return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
 			}
 		}
 		else{
 			if(act_val<17){
-				//assuming dealer does not have A
-
+				//assuming dealer has A
+				//The dealer has to just not get busted to win
 				return -(2*calc_non_bust_fixedA(17,21) -1);
 			}
 			else if(act_val<=21){
+				// The dealer has to prevent busting and also to get more than us
+				//More than us case
 				diff_down = act_val + 1;
 				diff_up = 21;
 				for(int i=diff_down;i<=diff_up;i++){
 					to_return = to_return - compute_reward_fixedA(17,i);
 				}
+				//Less than us case
 				for(int i = 17;i<=(act_val - 1);i++){
 					to_return = to_return + compute_reward_fixedA(17,i)
 				}
+				//Busted also added
 				return to_return + (1- calc_non_bust_fixedA(17,diff_up));
 			}
 		}
