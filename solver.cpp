@@ -62,9 +62,102 @@ double transition(State initial, Action a, State final){
 		    case 0: // when original is a hard hand;
 		    	if(final.typeState == 0){
 		    		int diff = final.value - initial.value;
+		    		if (diff <= 0){
+		    			return 0.0;
+		    		}
+		    		if(diff == 10){
+		    			return P_face;
+		    		}
+		    		return P_non_face;
+		    	}
+		    	if(final.typeState == 1){
+		    		if(final.value == initial.value && (final.value + 11 <= 21)){
+		    			return P_non_face;
+		    		}
+		    		return 0.0;
+		    	}
+		    	if(final.typeState == 3){
+		    		if(initial.value <= 11){
+		    			return 0.0;
+		    		}
+		    		return P_face + (initial.value - 12)*P_non_face;
 		    	}
 		        break;
-		    case 2: // code to be executed if n = 2;
+		    case 1: // when original is a soft hand;
+		    	if(final.typeState == 0){
+		    		int diff = final.value - (initial.value + 1);
+		    		if(initial.value + 11 + diff <= 21 || diff <= 0 || diff > 10){
+		    			return 0.0;
+		    		}
+		    		if(diff == 10){
+		    			return P_face;
+		    		}
+		    		return P_non_face;
+		    	}
+		    	if(final.typeState == 1){
+		    		int diff = final.value - initial.value;
+		    		if(final.value > 10 || diff <= 0){
+		    			return 0.0;
+		    		}
+		    		if(diff == 10){
+		    			return P_face;
+		    		}
+		    		return P_non_face;
+		    	}
+		    	if(final.typeState == 3){
+		    		return 0.0;
+		    	}
+		        break;
+		    case 2: // when original hand is a pair;
+		        if(final.typeState == 0){
+		    		if(initial.value != 1){
+		    			int diff = final.value - (2*initial.value);
+		    			if(diff < 0 || diff > 10){
+		    				return 0.0;
+		    			}
+		    			if(diff == 10){
+		    				return P_face;
+		    			}
+		    			return P_non_face;
+		    		}
+		    		else{
+		    			if(final.value == 12){
+		    				return P_face;
+		    			}
+		    			return 0.0;
+		    		}	
+		    	}
+		    	if(final.typeState == 1){
+		    		if(initial.value != 1){
+		    			if(initial.value > 5 || (final.value) != (2*initial.value)){
+		    				return 0.0;
+		    			}
+		    			return P_non_face;
+		    		}
+		    		else{
+		    			int diff = final.value - 1;
+		    			if(diff < 0 || diff > 10){
+		    				return 0.0;
+		    			}
+		    			if(diff == 10){
+		    				return P_face;
+		    			}
+		    			return P_non_face;
+		    		}
+		    	}
+		    	if(final.typeState == 3){
+		    		int diff;
+		    		if(initial.value == 1){
+
+		    		}
+		    		else{
+		    			diff = 21 - (2*initial.value);
+		    			if(diff >= 10){
+		    				return 0.0;
+		    			}
+		    			return P_face + (9-diff)*P_non_face;
+		    		}
+		    	}
 		        break;
 		    default: // code to be executed if n doesn't match any cases
 		}
