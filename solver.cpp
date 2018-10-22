@@ -136,11 +136,11 @@ double transition(State initial, Action a, State final){
 		    		}
 		    		else{
 		    			int diff = final.value - 1;
-		    			if(diff < 0 || diff > 10){
-		    				return 0.0;
+		    			if(diff == 9){
+		    				cout << "Error : pair to soft with ace";
 		    			}
-		    			if(diff == 10){
-		    				return P_face;
+		    			if(diff <= 0 || diff >= 9){
+		    				return 0.0;
 		    			}
 		    			return P_non_face;
 		    		}
@@ -160,6 +160,55 @@ double transition(State initial, Action a, State final){
 		    	}
 		        break;
 		    default: // code to be executed if n doesn't match any cases
+		    	cout << "Error transition no case matched 1";
+		    	break;
+		}
+	}
+	if(a == 1){
+		if(initial.typeState != 2 || (initial.value == 1 && final.start != 2) || (initial.value != 1 && final.start != 1)){
+			return 0.0;
+		}
+		if(initial.value != 1){
+			if(final.typeState == 1){
+				int diff = final.value - initial.value;
+				if(diff < 0 || diff > 10){
+					return0.0;
+				}
+				if(diff == 10){
+					return P_face;
+				}
+				return P_non_face;
+			}
+			if(final.typeState == 2){
+				return;
+			}
+			if(final.typeState == 3){
+				return;
+			}
+			if(final.typeState == 4){
+				return;
+			}
+		}
+		else{
+			if(final.typeState == 1){
+				int diff = final.value - initial.value;
+				if(diff < 0 || diff > 10){
+					return0.0;
+				}
+				if(diff == 10){
+					return P_face;
+				}
+				return P_non_face;
+			}
+			if(final.typeState == 2){
+				return;
+			}
+			if(final.typeState == 3){
+				return;
+			}
+			if(final.typeState == 4){
+				return;
+			}
 		}
 	}
 }
