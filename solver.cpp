@@ -16,7 +16,7 @@ typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
 double P;
 double P_face, P_non_face;
 double EPSILON;
-int NUM_STATES;
+int NUM_STATES = 722;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
 double ways_to_sum[22];
@@ -24,12 +24,55 @@ double ways_to_sum_fixedA[22];
 
 //function to convert state to int for indexing into array
 int state_to_int(State s){
-
+	//((17 + 9 + 10)*10)*2 + 1 + 1
+	int start_offset = s.start * 360;
+	int dealer_offset = (s.dealer-1) * 36;
+	int value_offset;
+	if(s.typeState == 3){
+		return 720;
+	}
+	if(s.typeState == 4){
+		return 721;
+	}
+	switch (s.typeState){
+		case 0: value_offset = s.value - 5; break;
+		case 1: value_offset = s.value + 15; break;
+		case 2: value_offset = s.value + 25; break;
+		case 3: value_offset = 0; break;
+		case 4: value_offset = 0; break;
+		default: cout << "Error state_to_int"; break;
+	}
+	return dealer_offset + value_offset + start_offset;
 }
 
 //function to convert integer to state
 State int_to_state(int s){
-
+	State st;
+	if(s == 720){
+		st.typeState = 3;
+		return st;
+	}
+	if(s == 721){
+		st.typeState = 4;
+		return st;
+	}
+	st.start = s/360;
+	s = s%360;
+	st.dealer = s/36 + 1;
+	s = s%36;
+	if(s <= 16){
+		st.typeState = 0;
+		st.value = s;
+	}
+	else if(s <= 25){
+		st.typeState = 1;
+		st.value = s-15
+	}
+	else{
+		st.typeState = 2;
+		st.value = s-25;
+	}
+	return st;
 }
 
 //function to convert action to string for output
