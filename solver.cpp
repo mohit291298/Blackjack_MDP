@@ -428,11 +428,12 @@ double reward(State s, Action a){
 		}
 	}
 	else if(a == 3){
-		for(int state = 0; state < NUM_STATES; state++){
-			State s1 = int_to_state(state);
-
-			ret += transition(s, 0, s1)*reward(s1,2);
+		for(int card = 1; card < 10; card++){
+			State final = update_state_hit(s, card);
+			ret += P_non_face*reward(final,2);
 		}
+		State final = update_state_hit(s, 10);
+		ret += P_face*reward(final,2);	
 		return ret;		
 	}	
 }
@@ -559,7 +560,7 @@ double bellmanBackup(State s){
 	/* calculating V_n(s) for split */
 	double val_split;
 	int sum_split 0.0;
-	for(int card1 = 0; card1 < 10; card1++){
+	for(int card1 = 1; card1 < 10; card1++){
 		State final1 = update_state_hit(s, card1);
 		int s1 = state_to_int(final1);
 		for(int card2 = 0; card2 < 10; card2++){
@@ -573,7 +574,7 @@ double bellmanBackup(State s){
 	}
 	State final1 = update_state_hit(s, 10);
 	int s1 = state_to_int(final1);		
-	for(int card2 = 0; card2 < 10; card2++){
+	for(int card2 = 1; card2 < 10; card2++){
 		State final2 = update_state_hit(s, card2);
 		int s2 = state_to_int(final2);
 		sum += P_face*P_non_face*(VALUES[s1] + VALUES[s2]);
