@@ -504,6 +504,7 @@ State update_state_hit(State initial, int card){
 			}
 			if(final.value > 21)
 				final.typeState = 3;
+			break;
 		case 1 :
 			final.value = initial.value + card;
 			if(final.value + 11 > 21){
@@ -513,6 +514,7 @@ State update_state_hit(State initial, int card){
 			else{
 				final.typeState = 1;
 			}
+			break;
 		case 2 : 
 			if(initial.value != 1 && card != 1){
 				final.value = (2*initial.value) + card;				
@@ -545,6 +547,7 @@ State update_state_hit(State initial, int card){
 			if(final.value > 21){
 				final.typeState = 3;
 			}
+			break;
 		case 3 : cout << "Error update state hit called on busted "; final.typeState = 3; break;
 		default : cout << "Error : update_state_hit"; break;
 	}
@@ -651,11 +654,12 @@ double bellmanBackup(State s){
 	}
 
 	if(s.typeState == 4){
+		cout << "Error : bellmanBackup called on blackjack";
 		return 2.5;
 	}
 
 	/* calculating V_n(s) for split */
-	if(s.typeState == 2 && s.start = 0;){
+	if(s.typeState == 2 && s.start = 0){
 		val_split = val_split(s);
 	}
 
@@ -687,16 +691,18 @@ void valueIteration(){
 	for(int i = 0; i < NUM_STATES; i++){
 		VALUES[i] = 0.0;
 	}
+	VALUES[720] = -1.0;
+	VALUES[721] = 2.5;
 
 	//value iteration
 	while(true){
 		max_diff = 0.0;
-		for(int s = 0; s < NUM_STATES; s++){
+		for(int s = 0; s < NUM_STATES-2; s++){
 			State initial = int_to_state(s);
 			updated_values[s] = bellmanBackup(initial);
 			max_diff = max(max_diff, fabs(updated_values[s] - VALUES[s]));
 		}
-		for(int s = 0; s < NUM_STATES; s++){
+		for(int s = 0; s < NUM_STATES-2; s++){
 			VALUES[s] = updated_values[s];
 		}
 		if(max_diff <= EPSILON){
@@ -704,7 +710,7 @@ void valueIteration(){
 		}
 	}
 
-	for(int s = 0; s < NUM_STATES; s++){
+	for(int s = 0; s < NUM_STATES-2; s++){
 		State initial = int_to_state(s);
 		OPT_ACTIONS[s] = setPolicy(initial);	
 	}
@@ -724,6 +730,7 @@ Action setPolicy(State s){
 	}
 
 	if(s.typeState == 4){
+		cout << "Error : bellmanBackup called on blackjack";
 		return 2.5;
 	}
 
