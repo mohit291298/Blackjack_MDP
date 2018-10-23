@@ -16,6 +16,13 @@ public:
 	int start;
 
 	//constructor
+	State(){
+		this->typeState = 0;
+		this->value = 0;
+		this->dealer = 0;
+		this->start = 0;
+
+	}
 	State(int typeState, int value, int dealer, int start){
 		this->typeState = typeState;
 		this->value = value;

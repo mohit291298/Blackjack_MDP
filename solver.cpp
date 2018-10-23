@@ -7,16 +7,18 @@
 #include <fstream>
 #include <random>
 #include <ctime>
+#include <stdlib.h>
 #include "./state.h"
 
 using namespace std;
-typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
-
+typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
+#define NUM_STATES 722
 //global variables
+
 double P;
 double P_face, P_non_face;
 double EPSILON;
-int NUM_STATES = 722;
+//const int NUM_STATES = 722;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
 double ways_to_sum[22];
@@ -66,7 +68,7 @@ State int_to_state(int s){
 	}
 	else if(s <= 25){
 		st.typeState = 1;
-		st.value = s-15
+		st.value = s-15;
 	}
 	else{
 		st.typeState = 2;
@@ -76,7 +78,7 @@ State int_to_state(int s){
 }
 
 //function to convert action to string for output
-char* action_to_string(Action a){
+string action_to_string(Action a){
 	if (a == 0)
 		return "H";
 	else if (a == 1)
@@ -88,175 +90,175 @@ char* action_to_string(Action a){
 }
 
 //transition function, returns value in interval [0,1]
-double transition(State initial, Action a, State final){
-	if (a == 2 || a == 3){
-		cout << "Error : transition";
-		return 0.0;
-	}
-	if(initial.dealer != final.dealer || final.start == 0){
-		return 0.0;
-	}
-	//for hit action
-	if(a == 0){
-		//after hit, start = 2 and final state cannot be a pair
-		if(final.start != 2 || final.typeState == 2){
-			return 0.0;
-		}
-		switch (initial.typeState)
-		{
-		    case 0: // when original is a hard hand;
-		    	if(final.typeState == 0){
-		    		int diff = final.value - initial.value;
-		    		if (diff <= 0){
-		    			return 0.0;
-		    		}
-		    		if(diff == 10){
-		    			return P_face;
-		    		}
-		    		return P_non_face;
-		    	}
-		    	if(final.typeState == 1){
-		    		if(final.value == initial.value && (final.value + 11 <= 21)){
-		    			return P_non_face;
-		    		}
-		    		return 0.0;
-		    	}
-		    	if(final.typeState == 3){
-		    		if(initial.value <= 11){
-		    			return 0.0;
-		    		}
-		    		return P_face + (initial.value - 12)*P_non_face;
-		    	}
-		        break;
-		    case 1: // when original is a soft hand;
-		    	if(final.typeState == 0){
-		    		int diff = final.value - (initial.value + 1);
-		    		if(initial.value + 11 + diff <= 21 || diff <= 0 || diff > 10){
-		    			return 0.0;
-		    		}
-		    		if(diff == 10){
-		    			return P_face;
-		    		}
-		    		return P_non_face;
-		    	}
-		    	if(final.typeState == 1){
-		    		int diff = final.value - initial.value;
-		    		if(final.value > 10 || diff <= 0){
-		    			return 0.0;
-		    		}
-		    		if(diff == 10){
-		    			return P_face;
-		    		}
-		    		return P_non_face;
-		    	}
-		    	if(final.typeState == 3){
-		    		return 0.0;
-		    	}
-		        break;
-		    case 2: // when original hand is a pair;
-		        if(final.typeState == 0){
-		    		if(initial.value != 1){
-		    			int diff = final.value - (2*initial.value);
-		    			if(diff < 0 || diff > 10){
-		    				return 0.0;
-		    			}
-		    			if(diff == 10){
-		    				return P_face;
-		    			}
-		    			return P_non_face;
-		    		}
-		    		else{
-		    			if(final.value == 12){
-		    				return P_face;
-		    			}
-		    			return 0.0;
-		    		}	
-		    	}
-		    	if(final.typeState == 1){
-		    		if(initial.value != 1){
-		    			if(initial.value > 5 || (final.value) != (2*initial.value)){
-		    				return 0.0;
-		    			}
-		    			return P_non_face;
-		    		}
-		    		else{
-		    			int diff = final.value - 1;
-		    			if(diff == 9){
-		    				cout << "Error : pair to soft with ace";
-		    			}
-		    			if(diff <= 0 || diff >= 9){
-		    				return 0.0;
-		    			}
-		    			return P_non_face;
-		    		}
-		    	}
-		    	if(final.typeState == 3){
-		    		int diff;
-		    		if(initial.value == 1){
+// double transition(State initial, Action a, State final){
+// 	if (a == 2 || a == 3){
+// 		cout << "Error : transition";
+// 		return 0.0;
+// 	}
+// 	if(initial.dealer != final.dealer || final.start == 0){
+// 		return 0.0;
+// 	}
+// 	//for hit action
+// 	if(a == 0){
+// 		//after hit, start = 2 and final state cannot be a pair
+// 		if(final.start != 2 || final.typeState == 2){
+// 			return 0.0;
+// 		}
+// 		switch (initial.typeState)
+// 		{
+// 		    case 0: // when original is a hard hand;
+// 		    	if(final.typeState == 0){
+// 		    		int diff = final.value - initial.value;
+// 		    		if (diff <= 0){
+// 		    			return 0.0;
+// 		    		}
+// 		    		if(diff == 10){
+// 		    			return P_face;
+// 		    		}
+// 		    		return P_non_face;
+// 		    	}
+// 		    	if(final.typeState == 1){
+// 		    		if(final.value == initial.value && (final.value + 11 <= 21)){
+// 		    			return P_non_face;
+// 		    		}
+// 		    		return 0.0;
+// 		    	}
+// 		    	if(final.typeState == 3){
+// 		    		if(initial.value <= 11){
+// 		    			return 0.0;
+// 		    		}
+// 		    		return P_face + (initial.value - 12)*P_non_face;
+// 		    	}
+// 		        break;
+// 		    case 1: // when original is a soft hand;
+// 		    	if(final.typeState == 0){
+// 		    		int diff = final.value - (initial.value + 1);
+// 		    		if(initial.value + 11 + diff <= 21 || diff <= 0 || diff > 10){
+// 		    			return 0.0;
+// 		    		}
+// 		    		if(diff == 10){
+// 		    			return P_face;
+// 		    		}
+// 		    		return P_non_face;
+// 		    	}
+// 		    	if(final.typeState == 1){
+// 		    		int diff = final.value - initial.value;
+// 		    		if(final.value > 10 || diff <= 0){
+// 		    			return 0.0;
+// 		    		}
+// 		    		if(diff == 10){
+// 		    			return P_face;
+// 		    		}
+// 		    		return P_non_face;
+// 		    	}
+// 		    	if(final.typeState == 3){
+// 		    		return 0.0;
+// 		    	}
+// 		        break;
+// 		    case 2: // when original hand is a pair;
+// 		        if(final.typeState == 0){
+// 		    		if(initial.value != 1){
+// 		    			int diff = final.value - (2*initial.value);
+// 		    			if(diff < 0 || diff > 10){
+// 		    				return 0.0;
+// 		    			}
+// 		    			if(diff == 10){
+// 		    				return P_face;
+// 		    			}
+// 		    			return P_non_face;
+// 		    		}
+// 		    		else{
+// 		    			if(final.value == 12){
+// 		    				return P_face;
+// 		    			}
+// 		    			return 0.0;
+// 		    		}	
+// 		    	}
+// 		    	if(final.typeState == 1){
+// 		    		if(initial.value != 1){
+// 		    			if(initial.value > 5 || (final.value) != (2*initial.value)){
+// 		    				return 0.0;
+// 		    			}
+// 		    			return P_non_face;
+// 		    		}
+// 		    		else{
+// 		    			int diff = final.value - 1;
+// 		    			if(diff == 9){
+// 		    				cout << "Error : pair to soft with ace";
+// 		    			}
+// 		    			if(diff <= 0 || diff >= 9){
+// 		    				return 0.0;
+// 		    			}
+// 		    			return P_non_face;
+// 		    		}
+// 		    	}
+// 		    	if(final.typeState == 3){
+// 		    		int diff;
+// 		    		if(initial.value == 1){
 
-		    		}
-		    		else{
-		    			diff = 21 - (2*initial.value);
-		    			if(diff >= 10){
-		    				return 0.0;
-		    			}
-		    			return P_face + (9-diff)*P_non_face;
-		    		}
-		    	}
-		        break;
-		    default: // code to be executed if n doesn't match any cases
-		    	cout << "Error transition no case matched 1";
-		    	break;
-		}
-	}
-	if(a == 1){
-		if(initial.typeState != 2 || (initial.value == 1 && final.start != 2) || (initial.value != 1 && final.start != 1)){
-			return 0.0;
-		}
-		if(initial.value != 1){
-			if(final.typeState == 1){
-				int diff = final.value - initial.value;
-				if(diff < 0 || diff > 10){
-					return0.0;
-				}
-				if(diff == 10){
-					return P_face;
-				}
-				return P_non_face;
-			}
-			if(final.typeState == 2){
-				return;
-			}
-			if(final.typeState == 3){
-				return;
-			}
-			if(final.typeState == 4){
-				return;
-			}
-		}
-		else{
-			if(final.typeState == 1){
-				int diff = final.value - initial.value;
-				if(diff < 0 || diff > 10){
-					return0.0;
-				}
-				if(diff == 10){
-					return P_face;
-				}
-				return P_non_face;
-			}
-			if(final.typeState == 2){
-				return;
-			}
-			if(final.typeState == 3){
-				return;
-			}
-			if(final.typeState == 4){
-				return;
-			}
-		}
-	}
-}
+// 		    		}
+// 		    		else{
+// 		    			diff = 21 - (2*initial.value);
+// 		    			if(diff >= 10){
+// 		    				return 0.0;
+// 		    			}
+// 		    			return P_face + (9-diff)*P_non_face;
+// 		    		}
+// 		    	}
+// 		        break;
+// 		    default: // code to be executed if n doesn't match any cases
+// 		    	cout << "Error transition no case matched 1";
+// 		    	break;
+// 		}
+// 	}
+// 	if(a == 1){
+// 		if(initial.typeState != 2 || (initial.value == 1 && final.start != 2) || (initial.value != 1 && final.start != 1)){
+// 			return 0.0;
+// 		}
+// 		if(initial.value != 1){
+// 			if(final.typeState == 1){
+// 				int diff = final.value - initial.value;
+// 				if(diff < 0 || diff > 10){
+// 					return 0.0;
+// 				}
+// 				if(diff == 10){
+// 					return P_face;
+// 				}
+// 				return P_non_face;
+// 			}
+// 			if(final.typeState == 2){
+// 				return;
+// 			}
+// 			if(final.typeState == 3){
+// 				return;
+// 			}
+// 			if(final.typeState == 4){
+// 				return;
+// 			}
+// 		}
+// 		else{
+// 			if(final.typeState == 1){
+// 				int diff = final.value - initial.value;
+// 				if(diff < 0 || diff > 10){
+// 					return0.0;
+// 				}
+// 				if(diff == 10){
+// 					return P_face;
+// 				}
+// 				return P_non_face;
+// 			}
+// 			if(final.typeState == 2){
+// 				return;
+// 			}
+// 			if(final.typeState == 3){
+// 				return;
+// 			}
+// 			if(final.typeState == 4){
+// 				return;
+// 			}
+// 		}
+// 	}
+// }
 
 double calc_ways_to_sum(){
 	ways_to_sum[0] = 0;
@@ -371,7 +373,7 @@ double calc_non_bust(int start,int end){
 	final += ways_to_sum[start];
 	
 	for(int i= start + 1;i<=end;i++){
-		temp = ways_to_sum[i];
+		double temp = ways_to_sum[i];
 		for(int j = i-1;j>=start;j++){
 			temp = temp - ways_to_sum[j]*P_non_face;
 		}
@@ -395,91 +397,15 @@ double compute_reward_fixedA(int start,int end){
 double calc_non_bust_fixedA(int start,int end){
 	double final = 0.0;
 	final += ways_to_sum_fixedA[start];
-	
+
 	for(int i= start + 1;i<=end;i++){
-		temp = ways_to_sum_fixedA[i];
+		double temp = ways_to_sum_fixedA[i];
 		for(int j = i-1;j>=start;j++){
 			temp = temp - ways_to_sum_fixedA[j]*P_non_face;
 		}
 		final += temp;
 	}
 	return final;	
-}
-
-//reward function for taking stand or double on a given state
-double reward(State s, Action a){
-	double ret = 0.0;
-	if(a==2){
-		int act_val;
-		int to_return = 0.0;
-		int diff_up = 21 - s.dealer;
-		int diff_down = 17 - s.dealer;
-		if(s.typeState == 3){
-			return -1.0;
-			// cout<<"Error\n";
-		}
-		else if(s.typeState == 0){
-			act_val = s.value;
-		}
-		else if(s.typeState == 1){
-			act_val = 11 + s.value;
-		}
-		else{
-			act_val = 2*s.value;
-		}
-		if(s.dealer !=1){
-			if(act_val<17){
-				//assuming dealer does not have A
-				//The dealer has to just not get busted to win
-				return -(2*calc_non_bust(diff_down,diff_up) -1);
-			}
-			else if(act_val<=21){
-				// The dealer has to prevent busting and also to get more than us
-				//More than us case
-				diff_down = act_val - s.dealer + 1;
-				for(int i=diff_down;i<=diff_up;i++){
-					to_return = to_return - compute_reward(17-s.dealer,i);
-				}
-				//Less than us case
-				for(int i = 17-s.dealer;i<=(act_val - s.dealer - 1);i++){
-					to_return = to_return + compute_reward(17-s.dealer,i)
-				}
-				//Busted also added
-				return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
-			}
-		}
-		else{
-			if(act_val<17){
-				//assuming dealer has A
-				//The dealer has to just not get busted to win
-				return -(2*calc_non_bust_fixedA(17,21) -1);
-			}
-			else if(act_val<=21){
-				// The dealer has to prevent busting and also to get more than us
-				//More than us case
-				diff_down = act_val + 1;
-				diff_up = 21;
-				for(int i=diff_down;i<=diff_up;i++){
-					to_return = to_return - compute_reward_fixedA(17,i);
-				}
-				//Less than us case
-				for(int i = 17;i<=(act_val - 1);i++){
-					to_return = to_return + compute_reward_fixedA(17,i)
-				}
-				//Busted also added
-				return to_return + (1- calc_non_bust_fixedA(17,diff_up));
-			}
-		}
-	}
-	else if(a == 3){
-		for(int card = 1; card < 10; card++){
-			State final = update_state_hit(s, card);
-			ret += P_non_face*reward(final,2);
-		}
-		State final = update_state_hit(s, 10);
-		ret += P_face*reward(final,2);	
-		return ret;		
-	}	
 }
 
 State update_state_hit(State initial, int card){
@@ -554,6 +480,84 @@ State update_state_hit(State initial, int card){
 	return final;
 }
 
+
+//reward function for taking stand or double on a given state
+double reward(State s, Action a){
+	double ret = 0.0;
+	if(a==2){
+		int act_val;
+		int to_return = 0.0;
+		int diff_up = 21 - s.dealer;
+		int diff_down = 17 - s.dealer;
+		if(s.typeState == 3){
+			return -1.0;
+			// cout<<"Error\n";
+		}
+		else if(s.typeState == 0){
+			act_val = s.value;
+		}
+		else if(s.typeState == 1){
+			act_val = 11 + s.value;
+		}
+		else{
+			act_val = 2*s.value;
+		}
+		if(s.dealer !=1){
+			if(act_val<17){
+				//assuming dealer does not have A
+				//The dealer has to just not get busted to win
+				return -(2*calc_non_bust(diff_down,diff_up) -1);
+			}
+			else if(act_val<=21){
+				// The dealer has to prevent busting and also to get more than us
+				//More than us case
+				diff_down = act_val - s.dealer + 1;
+				for(int i=diff_down;i<=diff_up;i++){
+					to_return = to_return - compute_reward(17-s.dealer,i);
+				}
+				//Less than us case
+				for(int i = 17-s.dealer;i<=(act_val - s.dealer - 1);i++){
+					to_return = to_return + compute_reward(17-s.dealer,i);
+				}
+				//Busted also added
+				return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
+			}
+		}
+		else{
+			if(act_val<17){
+				//assuming dealer has A
+				//The dealer has to just not get busted to win
+				return -(2*calc_non_bust_fixedA(17,21) -1);
+			}
+			else if(act_val<=21){
+				// The dealer has to prevent busting and also to get more than us
+				//More than us case
+				diff_down = act_val + 1;
+				diff_up = 21;
+				for(int i=diff_down;i<=diff_up;i++){
+					to_return = to_return - compute_reward_fixedA(17,i);
+				}
+				//Less than us case
+				for(int i = 17;i<=(act_val - 1);i++){
+					to_return = to_return + compute_reward_fixedA(17,i);
+				}
+				//Busted also added
+				return to_return + (1- calc_non_bust_fixedA(17,diff_up));
+			}
+		}
+	}
+	else if(a == 3){
+		for(int card = 1; card < 10; card++){
+			State final = update_state_hit(s, card);
+			ret += P_non_face*reward(final,2);
+		}
+		State final = update_state_hit(s, 10);
+		ret += P_face*reward(final,2);	
+		return ret;		
+	}	
+}
+
+
 State update_state_split(State initial, int card_new){
 	State final;
 	if(initial.value != 1){
@@ -601,7 +605,7 @@ State update_state_split(State initial, int card_new){
 }
 
 double val_split(State s){
-	int sum 0.0;
+	double sum = 0.0;
 	for(int card1 = 1; card1 < 10; card1++){
 		State final1 = update_state_hit(s, card1);
 		int s1 = state_to_int(final1);
@@ -630,21 +634,21 @@ double val_split(State s){
 double val_hit(State s){
 	double sum = 0.0;
 	for(int card = 0; card < 10; card++){
-		State final = update_state_hit(initial, card);
+		State final = update_state_hit(s, card);
 		int s = state_to_int(final);
 		sum += P_non_face*VALUES[s];
 	}
-	State final = update_state_hit(initial, 10);
-	int s = state_to_int(final);
-	sum += P_face*VALUES[s];
+	State final = update_state_hit(s, 10);
+	int s_int = state_to_int(final);
+	sum += P_face*VALUES[s_int];
 	return sum;
 }
 
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
 	double max_val = -100.0;
-	double val_split = -100.0;
-	double val_hit = -100.0;
+	double val_split_val = -100.0;
+	double val_hit_val = -100.0;
 	double val_stand = -100.0;
 	double val_double = -100.0;
 
@@ -659,12 +663,12 @@ double bellmanBackup(State s){
 	}
 
 	/* calculating V_n(s) for split */
-	if(s.typeState == 2 && s.start = 0){
-		val_split = val_split(s);
+	if(s.typeState == 2 && s.start == 0){
+		val_split_val = val_split(s);
 	}
 
 	/* calculating V_n(s) for hit */
-	val_hit = val_hit(s);
+	val_hit_val = val_hit(s);
 	
 	/* calculating V_n(s) for stand */
 	val_stand = reward(s, 2);
@@ -674,13 +678,61 @@ double bellmanBackup(State s){
 		val_double = 2*reward(s, 3);
 	}
 
-	max_val = max(max_val, val_split);
-	max_val = max(max_val, val_hit);
+	max_val = max(max_val, val_split_val);
+	max_val = max(max_val, val_hit_val);
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
 
 	return max_val;
 }
+
+Action setPolicy(State s){
+	double max_val = -100.0;
+	double val_split_val = -100.0;
+	double val_hit_val = -100.0;
+	double val_stand = -100.0;
+	double val_double = -100.0;
+
+	if(s.typeState == 3){
+		cout << "Error : bellmanBackup called on busted";
+		return -1.0;
+	}
+
+	if(s.typeState == 4){
+		cout << "Error : bellmanBackup called on blackjack";
+		return 2.5;
+	}
+
+	/* calculating V_n(s) for split */
+	if(s.typeState == 2 && s.start == 0){
+		val_split_val = val_split(s);
+	}
+
+	/* calculating V_n(s) for hit */
+	val_hit_val = val_hit(s);
+	
+	/* calculating V_n(s) for stand */
+	val_stand = reward(s, 2);
+
+	/* calculating V_n(s) for double */	
+	if(s.start == 0){
+		val_double = 2*reward(s, 3);
+	}
+
+	max_val = max(max_val, val_split_val);
+	max_val = max(max_val, val_hit_val);
+	max_val = max(max_val, val_stand);
+	max_val = max(max_val, val_double);
+
+	if(max_val == val_split_val)
+		return 1;
+	else if(max_val == val_hit_val)
+		return 0;
+	else if(max_val == val_stand)
+		return 2;
+	else
+		return 3;
+} 
 
 //function to set OPT_ACTIONS for each state
 void valueIteration(){
@@ -717,53 +769,6 @@ void valueIteration(){
 }
 
 //function to set the opimum action in each state
-Action setPolicy(State s){
-	double max_val = -100.0;
-	double val_split = -100.0;
-	double val_hit = -100.0;
-	double val_stand = -100.0;
-	double val_double = -100.0;
-
-	if(s.typeState == 3){
-		cout << "Error : bellmanBackup called on busted";
-		return -1.0;
-	}
-
-	if(s.typeState == 4){
-		cout << "Error : bellmanBackup called on blackjack";
-		return 2.5;
-	}
-
-	/* calculating V_n(s) for split */
-	if(s.typeState == 2 && s.start = 0;){
-		val_split = val_split(s);
-	}
-
-	/* calculating V_n(s) for hit */
-	val_hit = val_hit(s);
-	
-	/* calculating V_n(s) for stand */
-	val_stand = reward(s, 2);
-
-	/* calculating V_n(s) for double */	
-	if(s.start == 0){
-		val_double = 2*reward(s, 3);
-	}
-
-	max_val = max(max_val, val_split);
-	max_val = max(max_val, val_hit);
-	max_val = max(max_val, val_stand);
-	max_val = max(max_val, val_double);
-
-	if(max_val == val_split)
-		return 1;
-	else if(max_val == val_hit)
-		return 0;
-	else if(max_val == val_stand)
-		return 2;
-	else
-		return 3;
-} 
 
 //function to output OPT_ACTIONS
 void output(){
@@ -818,5 +823,10 @@ void output(){
 }
 
 int main(int argc, char **argv){
+
+	P = atof(argv[1]);
+	P_face = P;
+	P_non_face = (1-P)/9;
+	cout<<P;
 	return 0;
 }
