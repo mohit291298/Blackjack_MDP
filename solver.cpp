@@ -7,12 +7,14 @@
 #include <fstream>
 #include <random>
 #include <ctime>
+#include <stdlib.h>
 #include "./state.h"
 
 using namespace std;
 typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
 
 //global variables
+
 double P;
 double P_face, P_non_face;
 double EPSILON;
@@ -771,5 +773,10 @@ void output(){
 }
 
 int main(int argc, char **argv){
+
+	P = atof(argv[1]);
+	P_face = P;
+	P_non_face = (1-P)/9;
+	cout<<P;
 	return 0;
 }
