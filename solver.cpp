@@ -375,7 +375,7 @@ double calc_non_bust(int start,int end){
 	
 	for(int i= start + 1;i<=end;i++){
 		double temp = ways_to_sum[i];
-		for(int j = i-1;j>=start;j++){
+		for(int j = i-1;j>=start;j--){
 			temp = temp - ways_to_sum[j]*P_non_face;
 		}
 		final += temp;
@@ -401,7 +401,7 @@ double calc_non_bust_fixedA(int start,int end){
 
 	for(int i= start + 1;i<=end;i++){
 		double temp = ways_to_sum_fixedA[i];
-		for(int j = i-1;j>=start;j++){
+		for(int j = i-1;j>=start;j--){
 			temp = temp - ways_to_sum_fixedA[j]*P_non_face;
 		}
 		final += temp;
@@ -556,6 +556,7 @@ double reward(State s, Action a){
 		ret += P_face*reward(final,2);	
 		return ret;		
 	}	
+	cout<<"after reward \n";
 }
 
 
