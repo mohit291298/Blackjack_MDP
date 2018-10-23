@@ -754,9 +754,11 @@ void valueIteration(){
 		max_diff = 0.0;
 		for(int s = 0; s < NUM_STATES-2; s++){
 			State initial = int_to_state(s);
+			// cout<<initial.dealer<<"\n";
 			updated_values[s] = bellmanBackup(initial);
 			max_diff = max(max_diff, fabs(updated_values[s] - VALUES[s]));
 		}
+		// cout<<"OUTTTTTT\n";
 		for(int s = 0; s < NUM_STATES-2; s++){
 			VALUES[s] = updated_values[s];
 		}
@@ -836,7 +838,8 @@ int main(int argc, char **argv){
 	P = atof(argv[1]);
 	P_face = P;
 	P_non_face = (1-P)/9;
-	
+	calc_ways_to_sum();
+	calc_ways_to_sum_fixedA();
 	valueIteration();
 	cout << "hello worls";
 	output();
