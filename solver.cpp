@@ -437,39 +437,169 @@ double reward(State s, Action a){
 	}	
 }
 
+State update_state_hit(State initial, int card){
+	State final;
+	final.start = 1;
+	final.dealer = initial.dealer;
+	switch(initial.typeState){
+		case 0 : 
+			if (card != 1) {
+				final.value = initial.value + card;
+				final.typeState = 0;
+			}
+			else{
+				if(initial.value + 11 <= 21){
+					final.value = initial.value;
+					final.typeState = 1;
+				}
+				else{
+					final.value = initial.value + 1;
+					final.typeState = 0;
+				}
+			}
+			if(final.value > 21)
+				final.typeState = 3;
+		case 1 :
+			final.value = initial.value + card;
+			if(final.value + 11 > 21){
+				final.value += 1;
+				final.typeState = 0;
+			}
+			else{
+				final.typeState = 1;
+			}
+		case 2 : 
+			if(initial.value != 1 && card != 1){
+				final.value = (2*initial.value) + card;				
+				final.typeState = 0;
+			}
+			else if (initial.value != 1){
+				if((2*initial.value) + 11 <= 21){
+					final.value = (2*initial.value);
+					final.typeState = 1;
+				}
+				else{
+					final.value = (2*initial.value) + 1;
+					final.typeState = 0;
+				}
+			}
+			else if (card != 1){
+				if(12 + card <= 21){
+					final.value = 1 + card;
+					final.typeState = 1;
+				}
+				else{
+					final.value = 2 + card;
+					final.typeState = 0;
+				}
+			}
+			else{
+				final.value = 2;
+				final.typeState = 1;
+			}
+			if(final.value > 21){
+				final.typeState = 3;
+			}
+		case 3 : cout << "Error update state hit called on busted "; final.typeState = 3; break;
+		default : cout << "Error : update_state_hit"; break;
+	}
+	return final;
+}
+
+State update_state_split(State initial, int card_new){
+	State final;
+	if(initial.value != 1){
+		final.start = 0;
+	}
+	else{
+		final.start = 1;
+	}
+	final.dealer = initial.dealer;
+	
+	if (initial.typeState != 2){
+		cout << "Error : update state split called on non pair state";
+	}
+	else{
+		if(card_new == initial.value){
+			final.value = initial.value;
+			final.typeState = 2;
+		}
+		else{
+			if(card_new != 1 && initial.value != 1){
+				final.value = initial.value + card_new;
+				final.typeState = 0;
+			}
+			else if(initial.value != 1){
+				if(initial.value == 10){
+					final.value = 21;
+					final.typeState = 4;
+				}
+				else{
+					final.value = initial.value;
+					final.typeState = 1;	
+				}
+			}
+			else if(card_new != 1){
+				final.value = card_new;
+				final.typeState = 1;
+			}
+			else{
+				final.value = 1;
+				final.typeState = 2;
+			}
+		}
+	}
+	return final;
+}
+
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
 	double max_val = -100.0;
+
 	/* calculating V_n(s) for split */
-	double val_split = -100.0;
+	double val_split;
 	int sum_split 0.0;
-	if(s.typeState == 2){
-		//init_split = s.value/2;
-		for(int state = 0; state < NUM_STATES; state++){
-			State s1 = int_to_state(state);
-			sum_split += transition(s, 1, s1)*VALUES[state];
+	for(int card1 = 0; card1 < 10; card1++){
+		State final1 = update_state_hit(s, card1);
+		int s1 = state_to_int(final1);
+		for(int card2 = 0; card2 < 10; card2++){
+			State final2 = update_state_hit(s, card2);
+			int s2 = state_to_int(final2);
+			sum += P_non_face*P_non_face*(VALUES[s1] + VALUES[s2]);
 		}
-	val_split = sum_split*2 - 1;
+		State final2 = update_state_hit(s, 10);
+		int s2 = state_to_int(final2);
+		sum += P_non_face*P_face*(VALUES[s1] + VALUES[s2]);
 	}
+	State final1 = update_state_hit(s, 10);
+	int s1 = state_to_int(final1);		
+	for(int card2 = 0; card2 < 10; card2++){
+		State final2 = update_state_hit(s, card2);
+		int s2 = state_to_int(final2);
+		sum += P_face*P_non_face*(VALUES[s1] + VALUES[s2]);
+	}
+	State final2 = update_state_hit(s, 10);
+	int s2 = state_to_int(final2);
+	sum += P_face*P_face*(VALUES[s1] + VALUES[s2]);
+	val_split = sum;
 
 	/* calculating V_n(s) for hit */
-
 	double val_hit;
 	double sum = 0.0;
-	for(int state = 0; state < NUM_STATES; state++){
-		State s1 = int_to_state(state);
-		sum += transition(s, 0, s1)*VALUES[state];
+	for(int card = 0; card < 10; card++){
+		State final = update_state_hit(initial, card);
+		int s = state_to_int(final);
+		sum += P_non_face*VALUES[s];
 	}
+	State final = update_state_hit(initial, 10);
+	int s = state_to_int(final);
+	sum += P_face*VALUES[s];
 	val_hit = sum;
+	
 	/* calculating V_n(s) for stand */
 	double val_stand = reward(s, 2);
 	/* calculating V_n(s) for double */	
 	double val_double = 2*reward(s, 3);
-
-	max_val = max(max_val, val_stand);
-	max_val = max(max_val, val_double);
-	max_val = max(max_val, val_split);
-	max_val = max(max_val, val_hit);
 
 	return max_val;
 }
