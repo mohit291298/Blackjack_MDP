@@ -15,6 +15,7 @@ typedef int Action 		//0 << hit, 1 << split, 2 << stand, 3 << double
 //global variables
 double P;
 double P_face, P_non_face;
+double EPSILON;
 int NUM_STATES;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
@@ -553,13 +554,8 @@ State update_state_split(State initial, int card_new){
 	return final;
 }
 
-//returns V'(s) using previousy computed state values
-double bellmanBackup(State s){
-	double max_val = -100.0;
-
-	/* calculating V_n(s) for split */
-	double val_split;
-	int sum_split 0.0;
+double val_split(State s){
+	int sum 0.0;
 	for(int card1 = 1; card1 < 10; card1++){
 		State final1 = update_state_hit(s, card1);
 		int s1 = state_to_int(final1);
@@ -582,10 +578,10 @@ double bellmanBackup(State s){
 	State final2 = update_state_hit(s, 10);
 	int s2 = state_to_int(final2);
 	sum += P_face*P_face*(VALUES[s1] + VALUES[s2]);
-	val_split = sum;
+	return sum;
+}
 
-	/* calculating V_n(s) for hit */
-	double val_hit;
+double val_hit(State s){
 	double sum = 0.0;
 	for(int card = 0; card < 10; card++){
 		State final = update_state_hit(initial, card);
@@ -595,20 +591,129 @@ double bellmanBackup(State s){
 	State final = update_state_hit(initial, 10);
 	int s = state_to_int(final);
 	sum += P_face*VALUES[s];
-	val_hit = sum;
+	return sum;
+}
+
+//returns V'(s) using previousy computed state values
+double bellmanBackup(State s){
+	double max_val = -100.0;
+	double val_split = -100.0;
+	double val_hit = -100.0;
+	double val_stand = -100.0;
+	double val_double = -100.0;
+
+	if(s.typeState == 3){
+		cout << "Error : bellmanBackup called on busted";
+		return -1.0;
+	}
+
+	if(s.typeState == 4){
+		return 2.5;
+	}
+
+	/* calculating V_n(s) for split */
+	if(s.typeState == 2 && s.start = 0;){
+		val_split = val_split(s);
+	}
+
+	/* calculating V_n(s) for hit */
+	val_hit = val_hit(s);
 	
 	/* calculating V_n(s) for stand */
-	double val_stand = reward(s, 2);
+	val_stand = reward(s, 2);
+
 	/* calculating V_n(s) for double */	
-	double val_double = 2*reward(s, 3);
+	if(s.start == 0){
+		val_double = 2*reward(s, 3);
+	}
+
+	max_val = max(max_val, val_split);
+	max_val = max(max_val, val_hit);
+	max_val = max(max_val, val_stand);
+	max_val = max(max_val, val_double);
 
 	return max_val;
 }
 
 //function to set OPT_ACTIONS for each state
 void valueIteration(){
+	double updated_values[NUM_STATES];
+	double max_diff;
 
+	//initializing
+	for(int i = 0; i < NUM_STATES; i++){
+		VALUES[i] = 0.0;
+	}
+
+	//value iteration
+	while(true){
+		max_diff = 0.0;
+		for(int s = 0; s < NUM_STATES; s++){
+			State initial = int_to_state(s);
+			updated_values[s] = bellmanBackup(initial);
+			max_diff = max(max_diff, fabs(updated_values[s] - VALUES[s]));
+		}
+		for(int s = 0; s < NUM_STATES; s++){
+			VALUES[s] = updated_values[s];
+		}
+		if(max_diff <= EPSILON){
+			break;
+		}
+	}
+
+	for(int s = 0; s < NUM_STATES; s++){
+		State initial = int_to_state(s);
+		OPT_ACTIONS[s] = setPolicy(initial);	
+	}
 }
+
+//function to set the opimum action in each state
+Action setPolicy(State s){
+	double max_val = -100.0;
+	double val_split = -100.0;
+	double val_hit = -100.0;
+	double val_stand = -100.0;
+	double val_double = -100.0;
+
+	if(s.typeState == 3){
+		cout << "Error : bellmanBackup called on busted";
+		return -1.0;
+	}
+
+	if(s.typeState == 4){
+		return 2.5;
+	}
+
+	/* calculating V_n(s) for split */
+	if(s.typeState == 2 && s.start = 0;){
+		val_split = val_split(s);
+	}
+
+	/* calculating V_n(s) for hit */
+	val_hit = val_hit(s);
+	
+	/* calculating V_n(s) for stand */
+	val_stand = reward(s, 2);
+
+	/* calculating V_n(s) for double */	
+	if(s.start == 0){
+		val_double = 2*reward(s, 3);
+	}
+
+	max_val = max(max_val, val_split);
+	max_val = max(max_val, val_hit);
+	max_val = max(max_val, val_stand);
+	max_val = max(max_val, val_double);
+
+	if(max_val == val_split)
+		return 1;
+	else if(max_val == val_hit)
+		return 0;
+	else if(max_val == val_stand)
+		return 2;
+	else
+		return 3;
+} 
 
 //function to output OPT_ACTIONS
 void output(){
