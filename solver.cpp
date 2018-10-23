@@ -13,11 +13,12 @@
 using namespace std;
 typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
 #define NUM_STATES 722
+#define EPSILON 0.2
+
 //global variables
 
 double P;
 double P_face, P_non_face;
-double EPSILON;
 //const int NUM_STATES = 722;
 double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
@@ -746,6 +747,7 @@ void valueIteration(){
 	VALUES[720] = -1.0;
 	VALUES[721] = 2.5;
 
+	cout << "\nexitted";
 	//value iteration
 	while(true){
 		max_diff = 0.0;
@@ -762,10 +764,14 @@ void valueIteration(){
 		}
 	}
 
+	cout << "\nexitted";
+
 	for(int s = 0; s < NUM_STATES-2; s++){
 		State initial = int_to_state(s);
 		OPT_ACTIONS[s] = setPolicy(initial);	
 	}
+
+	cout << "\nexitted";
 }
 
 //function to set the opimum action in each state
@@ -808,7 +814,7 @@ void output(){
 		int state = state_to_int(s);
 		fout << action_to_string(OPT_ACTIONS[state]) << "\n";
 	}
-	val = 1;
+	int val = 1;
 	fout << "AA" << "\t";
 	for(int d = 2; d <= 10; d++){
 		State s(2, val, d, 0);
@@ -824,9 +830,15 @@ void output(){
 
 int main(int argc, char **argv){
 
+	cout << "heerge";
+
 	P = atof(argv[1]);
 	P_face = P;
 	P_non_face = (1-P)/9;
-	cout<<P;
+	
+	valueIteration();
+	cout << "hello worls";
+	output();
+
 	return 0;
 }
