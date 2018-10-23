@@ -767,7 +767,54 @@ Action setPolicy(State s){
 
 //function to output OPT_ACTIONS
 void output(){
+	ofstream fout;
+	fout.open("Policy.txt", ios::out);
+	
+	for(int val = 5; val <= 19; val++){
+		fout << val << "\t";
+		for(int d = 2; d <= 10; d++){
+			State s(0, val, d, 0);
+			int state = state_to_int(s);
+			fout << action_to_string(OPT_ACTIONS[state]) << " ";
+		}
+		State s(0, val, 1, 0);
+		int state = state_to_int(s);
+		fout << action_to_string(OPT_ACTIONS[state]) << "\n";
+	}
+	for(int val = 2; val <= 9; val++){
+		fout << "A" << val << "\t";
+		for(int d = 2; d <= 10; d++){
+			State s(1, val, d, 0);
+			int state = state_to_int(s);
+			fout << action_to_string(OPT_ACTIONS[state]) << " ";
+		}
+		State s(1, val, 1, 0);
+		int state = state_to_int(s);
+		fout << action_to_string(OPT_ACTIONS[state]) << "\n";
+	}
+	for(int val = 2; val <= 10; val++){
+		fout << val << val << "\t";
+		for(int d = 2; d <= 10; d++){
+			State s(2, val, d, 0);
+			int state = state_to_int(s);
+			fout << action_to_string(OPT_ACTIONS[state]) << " ";
+		}
+		State s(2, val, 1, 0);
+		int state = state_to_int(s);
+		fout << action_to_string(OPT_ACTIONS[state]) << "\n";
+	}
+	val = 1;
+	fout << "AA" << "\t";
+	for(int d = 2; d <= 10; d++){
+		State s(2, val, d, 0);
+		int state = state_to_int(s);
+		fout << action_to_string(OPT_ACTIONS[state]) << " ";
+	}
+	State s(2, val, 1, 0);
+	int state = state_to_int(s);
+	fout << action_to_string(OPT_ACTIONS[state]);
 
+	fout.close();
 }
 
 int main(int argc, char **argv){
