@@ -24,7 +24,7 @@ double VALUES[NUM_STATES];
 Action OPT_ACTIONS[NUM_STATES];
 double ways_to_sum[22];
 double ways_to_sum_fixedA[22];
-
+std::clock_t start_main;
 double P_SUM[7][10];
 
 //function declaration
@@ -558,7 +558,7 @@ void valueIteration(){
 	cout << "\nexitted";
 	//value iteration
 	int iter = 0;
-	while(true){
+	while((( std::clock() - start_main )/double(CLOCKS_PER_SEC)) < 20*0.95){
 		iter++;
 		cout << endl << iter;
 		max_diff = 0.0;
@@ -662,16 +662,17 @@ int main(int argc, char **argv){
 	// 		cout<<i<<" "<<state_to_int(s)<<" false\n";
 	// 	}
 	// }
-
+	start_main = std::clock();
 	valueIteration();
 	output();
 
-	for(int i =0; i < 7; i++){
-		for(int j = 0; j < 10; j++){
-			cout << P_SUM[i][j] << " ";
-		}
-		cout << "\n";
-	}
+	// for(int i =0; i < 7; i++){
+	// 	for(int j = 0; j < 10; j++){
+	// 		cout << P_SUM[i][j] << " ";
+	// 	}
+	// 	cout << "\n";
+	// }
+    cout<<(std::clock() - start_main)/double(CLOCKS_PER_SEC)<<"\n";
 
 	return 0;
 }
