@@ -520,13 +520,13 @@ Action setPolicy(State s){
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
 
-	if(s.typeState == 2 && s.value == 1 && s.dealer == 1 && s.start == 0){
-		cout << "AA, A\n";
-		cout << "split : " << val_split_val << "\n";
-		cout << "hit : " << val_hit_val << "\n";
-		cout << "stand : " << val_stand << "\n";
-		cout << "double : " << val_double << "\n";
-	}
+	// if(s.typeState == 2 && s.value == 1 && s.dealer == 1 && s.start == 0){
+	// 	cout << "AA, A\n";
+	// 	cout << "split : " << val_split_val << "\n";
+	// 	cout << "hit : " << val_hit_val << "\n";
+	// 	cout << "stand : " << val_stand << "\n";
+	// 	cout << "double : " << val_double << "\n";
+	// }
 
 	if((max_val == val_split_val) || (std::abs(max_val- val_split_val)<std::abs(std::min(max_val,val_split_val))*std::numeric_limits<double>::epsilon()))
 		return 1;
@@ -555,12 +555,12 @@ void valueIteration(){
 	}
 	VALUES[730] = -1.0;
 
-	cout << "\nexitted";
+	// cout << "\nexitted";
 	//value iteration
 	int iter = 0;
 	while((( std::clock() - start_main )/double(CLOCKS_PER_SEC)) < 20*0.95){
 		iter++;
-		cout << endl << iter;
+		// cout << endl << iter;
 		max_diff = 0.0;
 		for(int s = 0; s < NUM_STATES-11; s++){
 			State initial = int_to_state(s);
@@ -577,14 +577,14 @@ void valueIteration(){
 		}
 	}
 
-	cout << "\nexitted";
+	// cout << "\nexitted";
 
 	for(int s = 0; s < NUM_STATES-11; s++){
 		State initial = int_to_state(s);
 		OPT_ACTIONS[s] = setPolicy(initial);	
 	}
 
-	cout << "\nexitted";
+	// cout << "\nexitted";
 }
 
 //function to output OPT_ACTIONS
@@ -672,7 +672,7 @@ int main(int argc, char **argv){
 	// 	}
 	// 	cout << "\n";
 	// }
-    cout<<(std::clock() - start_main)/double(CLOCKS_PER_SEC)<<"\n";
+    // cout<<(std::clock() - start_main)/double(CLOCKS_PER_SEC)<<"\n";
 
 	return 0;
 }
