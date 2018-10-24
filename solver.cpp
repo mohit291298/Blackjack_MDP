@@ -406,6 +406,9 @@ double get_val_hand(State s){
 double P_hard_sum(int sum, int initial){
 	double pr = 0.0;
 	int diff = sum - initial;
+	if(initial >= 17 && diff != 0){
+		return 0;
+	}
 	if(diff < 0)
 		return 0;
 	if(diff == 0)
@@ -428,6 +431,9 @@ double P_hard_sum(int sum, int initial){
 double P_soft_sum(int sum, int initial){
 	double pr = 0.0;
 	int diff = sum - initial;
+	if(initial >= 17 && diff != 0){
+		return 0;
+	}
 	if(diff < 0)
 		return 0;
 	if(diff == 0)
@@ -450,7 +456,7 @@ double P_soft_sum(int sum, int initial){
 //sum = 22 is sum to blackjack, 23 is busted 
 double P_sum_to(int sum, int card){
 	if(sum == 23){
-		return 1-(P_sum_to(17, card) + P_sum_to(18, card) + P_sum_to(19, card) + P_sum_to(20, card) + P_sum_to(21, card) + P_sum_to(22, card)); // + P_blackjack
+		return 1-(P_sum_to(17, card) + P_sum_to(18, card) + P_sum_to(19, card) + P_sum_to(20, card) + P_sum_to(21, card) + P_sum_to(22, card));
 	}
 	if(sum == 22){
 		if(card == 1){
@@ -464,11 +470,26 @@ double P_sum_to(int sum, int card){
 		}
 	}
 	double pr = 0.0;
-	if(card != 1){
-		pr = P_hard_sum(sum, card);
+	if(card == 1){
+		if(sum != 21)
+			pr = P_soft_sum(sum, 11);
+		else{
+			for(int i = 1; i <= 9; i++){
+				pr += P_non_face*P_soft_sum(sum, 11 + i);
+			}
+		}
+	}
+	else if(card == 10){
+		if(sum != 21)
+			pr = P_hard_sum(sum, 10);
+		else{
+			for(int i = 2; i <= 6; i++){
+				pr += P_non_face*P_hard_sum(sum, 10+i);
+			}
+		}	
 	}
 	else{
-		pr = P_soft_sum(sum, 11);
+		pr = P_hard_sum(sum, card);
 	}
 	return pr;
 }
@@ -476,7 +497,7 @@ double P_sum_to(int sum, int card){
 //reward function for taking stand or double on a given state
 double reward_new(State s, Action a){
 	if(s.typeState == 3){
-		cout << "Error reward_new called on busted";
+		//cout << "Error reward_new called on busted";
 		return -1.0;
 	}
 	if(s.typeState == 4){
@@ -656,13 +677,13 @@ Action setPolicy(State s){
 	double val_double = -100.0;
 
 	if(s.typeState == 3){
-		cout << "Error : bellmanBackup called on busted";
-		return -1.0;
+		cout << "Error : setPolicy called on busted";
+		return 2;
 	}
 
 	if(s.typeState == 4){
-		cout << "Error : bellmanBackup called on blackjack";
-		return 2.5;
+		cout << "Error : setPolicy called on blackjack";
+		return 2;
 	}
 
 	/* calculating V_n(s) for split */
@@ -715,16 +736,19 @@ void valueIteration(){
 
 	cout << "\nexitted";
 	//value iteration
+	int iter = 0;
 	while(true){
+		iter++;
+		cout << endl << iter;
 		max_diff = 0.0;
-		for(int s = 0; s < NUM_STATES-1; s++){
+		for(int s = 0; s < NUM_STATES-11; s++){
 			State initial = int_to_state(s);
 			// cout<<initial.dealer<<"\n";
 			updated_values[s] = bellmanBackup(initial);
 			max_diff = max(max_diff, fabs(updated_values[s] - VALUES[s]));
 		}
 		// cout<<"OUTTTTTT\n";
-		for(int s = 0; s < NUM_STATES-2; s++){
+		for(int s = 0; s < NUM_STATES-11; s++){
 			VALUES[s] = updated_values[s];
 		}
 		if(max_diff <= EPSILON){
@@ -734,7 +758,7 @@ void valueIteration(){
 
 	cout << "\nexitted";
 
-	for(int s = 0; s < NUM_STATES-2; s++){
+	for(int s = 0; s < NUM_STATES-11; s++){
 		State initial = int_to_state(s);
 		OPT_ACTIONS[s] = setPolicy(initial);	
 	}
@@ -799,10 +823,6 @@ int main(int argc, char **argv){
 	P_face = P;
 	P_non_face = (1-P)/9;
 
-	//cout << P_hard_sum(17, 16);
-	//cout << endl;
-	//cout << P_hard_sum(17,17) << endl;
-
 	for(int val = 17; val <= 23; val++){
 		for(int d = 1; d <= 10; d++){
 			cout << P_sum_to(val, d) << " ";
@@ -810,10 +830,9 @@ int main(int argc, char **argv){
 		cout << "\n";
 	}
 
-	calc_ways_to_sum();
-	calc_ways_to_sum_fixedA();
+	//calc_ways_to_sum();
+	//calc_ways_to_sum_fixedA();
 	//valueIteration();
-	cout << "hello worls";
 	//output();
 
 	return 0;
