@@ -608,7 +608,7 @@ State update_state_split(State initial, int card_new){
 			else if(initial.value != 1){
 				if(initial.value == 10){
 					final.value = 21;
-					final.typeState = 4;
+					final.typeState = 0;
 				}
 				else{
 					final.value = initial.value;
@@ -871,6 +871,12 @@ int main(int argc, char **argv){
 		}
 		cout << "\n";
 	}*/
+	// for(int i=0;i<=722;i++){
+	// 	State s = int_to_state(i);
+	// 	if(i != (state_to_int(s))){
+	// 		cout<<i<<" "<<state_to_int(s)<<" false\n";
+	// 	}
+	// }
 
 	//calc_ways_to_sum();
 	//calc_ways_to_sum_fixedA();
