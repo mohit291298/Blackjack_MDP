@@ -25,6 +25,8 @@ Action OPT_ACTIONS[NUM_STATES];
 double ways_to_sum[22];
 double ways_to_sum_fixedA[22];
 
+double P_SUM[7][10];
+
 //function declaration
 double P_hard_sum(int sum, int initial);
 double P_soft_sum(int sum, int initial);
@@ -244,6 +246,9 @@ double P_sum_to(int sum, int card){
 			return 0.0;
 		}
 	}
+	if(P_SUM[sum-17][card-1] != -1){
+		return P_SUM[sum-17][card-1];
+	}
 	double pr = 0.0;
 	if(card == 1){
 		if(sum != 21)
@@ -266,6 +271,7 @@ double P_sum_to(int sum, int card){
 	else{
 		pr = P_hard_sum(sum, card);
 	}
+	P_SUM[sum-17][card-1] = pr;
 	return pr;
 }
 
@@ -276,7 +282,7 @@ double reward_new(State s, Action a){
 		return -1.0;
 	}
 	if(s.typeState == 4){
-		return 2.5*(1 - P_sum_to(22, s.dealer));
+		return 1.5*(1 - P_sum_to(22, s.dealer));
 	}
 	double rew = 0.0;
 	double val_hand = get_val_hand(s);
@@ -342,7 +348,7 @@ State update_state_split(State initial, int card_new){
 			else if(initial.value != 1){
 				if(initial.value == 10){
 					final.value = 21;
-					final.typeState = 0;
+					final.typeState = 4;
 				}
 				else{
 					final.value = initial.value;
@@ -638,7 +644,13 @@ int main(int argc, char **argv){
 	P_face = P;
 	P_non_face = (1-P)/9;
 
-	/*for(int val = 17; val <= 23; val++){
+	for(int i = 0; i < 7; i++){
+		for(int j = 0; j < 10; j++){
+			P_SUM[i][j] = -1.0;
+		}
+	}
+
+/*	for(int val = 17; val <= 23; val++){
 		for(int d = 1; d <= 10; d++){
 			cout << P_sum_to(val, d) << " ";
 		}
@@ -653,6 +665,13 @@ int main(int argc, char **argv){
 
 	valueIteration();
 	output();
+
+	for(int i =0; i < 7; i++){
+		for(int j = 0; j < 10; j++){
+			cout << P_SUM[i][j] << " ";
+		}
+		cout << "\n";
+	}
 
 	return 0;
 }
