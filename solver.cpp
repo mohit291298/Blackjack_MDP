@@ -556,7 +556,7 @@ double reward(State s, Action a){
 		ret += P_face*reward(final,2);	
 		return ret;		
 	}	
-	cout<<"after reward \n";
+	// cout<<"after reward \n";
 }
 
 
