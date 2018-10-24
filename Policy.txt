@@ -29,5 +29,5 @@ A9	S S S S S S S S S S
 77	P P P P P P H H H H
 88	P P P P P P P P H H
 99	P P P P P S P P S S
-1010	S P P P P S S S S S
+1010	S S S S S S S S S S
 AA	P P P P P P P P P H
