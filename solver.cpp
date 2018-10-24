@@ -13,7 +13,7 @@
 using namespace std;
 typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
 #define NUM_STATES 731
-#define EPSILON 0.05
+#define EPSILON 0.001
 
 //global variables
 
@@ -88,7 +88,7 @@ string action_to_string(Action a){
 	if (a == 0)
 		return "H";
 	else if (a == 1)
-		return "SP";
+		return "P";
 	else if (a == 2)
 		return "S";
 	else
@@ -658,7 +658,7 @@ double bellmanBackup(State s){
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward_new(s, 3);
+		val_double = reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
@@ -700,7 +700,7 @@ Action setPolicy(State s){
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward_new(s, 3);
+		val_double = reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
