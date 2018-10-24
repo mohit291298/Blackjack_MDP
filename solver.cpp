@@ -699,7 +699,7 @@ double bellmanBackup(State s){
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward_new(s, 3);
+		val_double = reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
@@ -741,7 +741,7 @@ Action setPolicy(State s){
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward_new(s, 3);
+		val_double = reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
