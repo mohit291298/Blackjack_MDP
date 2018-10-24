@@ -12,7 +12,7 @@
 
 using namespace std;
 typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
-#define NUM_STATES 722
+#define NUM_STATES 731
 #define EPSILON 0.05
 
 //global variables
@@ -31,15 +31,15 @@ double P_soft_sum(int sum, int initial);
 
 //function to convert state to int for indexing into array
 int state_to_int(State s){
-	//((17 + 9 + 10)*10)*2 + 1 + 1
+	//((17 + 9 + 10)*10)*2 + 10 + 1
 	int start_offset = s.start * 360;
 	int dealer_offset = (s.dealer-1) * 36;
 	int value_offset;
 	if(s.typeState == 3){
-		return 720;
+		return 730;
 	}
 	if(s.typeState == 4){
-		return 721;
+		return 719 + s.dealer;
 	}
 	switch (s.typeState){
 		case 0: value_offset = s.value - 5; break;
@@ -55,12 +55,13 @@ int state_to_int(State s){
 //function to convert integer to state
 State int_to_state(int s){
 	State st;
-	if(s == 720){
+	if(s == 730){
 		st.typeState = 3;
 		return st;
 	}
-	if(s == 721){
+	if(s < 730 && s > 719){
 		st.typeState = 4;
+		st.dealer = s-719;
 		return st;
 	}
 	st.start = s/360;
@@ -479,8 +480,7 @@ double reward_new(State s, Action a){
 		return -1.0;
 	}
 	if(s.typeState == 4){
-		cout << "Error reward_new called on blackjack";
-		return 2.5;
+		return 2.5*(1 - P_sum_to(22, s.dealer));
 	}
 	double rew = 0.0;
 	double val_hand = get_val_hand(s);
@@ -705,14 +705,19 @@ void valueIteration(){
 	for(int i = 0; i < NUM_STATES; i++){
 		VALUES[i] = 0.0;
 	}
-	VALUES[720] = -1.0;
-	VALUES[721] = 2.5;
+	State s0;
+	s0.typeState = 4;
+	for(int i = 720; i <= 729; i++){
+		s0.dealer = i-719;
+		VALUES[i] = reward_new(s0, 0);
+	}
+	VALUES[730] = -1.0;
 
 	cout << "\nexitted";
 	//value iteration
 	while(true){
 		max_diff = 0.0;
-		for(int s = 0; s < NUM_STATES-2; s++){
+		for(int s = 0; s < NUM_STATES-1; s++){
 			State initial = int_to_state(s);
 			// cout<<initial.dealer<<"\n";
 			updated_values[s] = bellmanBackup(initial);
