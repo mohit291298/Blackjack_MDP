@@ -88,186 +88,12 @@ string action_to_string(Action a){
 	if (a == 0)
 		return "H";
 	else if (a == 1)
-		return "SP";
+		return "P";
 	else if (a == 2)
 		return "S";
 	else
 		return "D";
 }
-
-// void calc_ways_to_sum(){
-// 	ways_to_sum[0] = 0;
-// 	// cout<<P_face<<"\n";
-// 	//A
-// 	ways_to_sum[1] = P_non_face;
-// 	//AA and 2
-// 	ways_to_sum[2] = ways_to_sum[1]*P_non_face + P_non_face;
-
-// 	for(int i = 3;i<=27;i++){
-// 		// 3 to 9 sum cases
-// 		if(i<=9){
-// 			for(int j=i-1;j>0;j--){
-// 				// getting j valued sum and then getting (i-j) valued card(always non_face till i = 9)
-// 				ways_to_sum[i] += ways_to_sum[j]*P_non_face;
-// 			}
-// 			// getting i valued card only(Non face)
-// 			ways_to_sum[i] += P_non_face;
-// 		}
-// 		else if(i==10){
-// 			for(int j=i-1;j>0;j--){
-// 				// getting j valued sum and then getting (i-j) valued card(always non_face for i = 10)
-// 				ways_to_sum[i] += ways_to_sum[j]*P_non_face;
-// 			}
-// 			// getting 10 valued card only
-// 			ways_to_sum[i] += P_face;
-// 		}
-// 		else if(i==11){
-// 			for(int j=i-1;j>(i-10);j--){
-// 				// getting j valued sum and then getting (i-j) valued card(non_face for j>(i-10))
-// 				ways_to_sum[i] += ways_to_sum[j]*P_non_face;
-// 			}
-// 				// getting i-10 valued sum and then getting 10 valued card(face)
-// 			ways_to_sum[i] += ways_to_sum[i-10]*P_face;
-// 			// getting 11 valued card only
-// 			ways_to_sum[i] += P_non_face;
-// 		}
-// 		else{
-// 			for(int j=i-1;j>(i-10);j--){
-// 				// getting j valued sum and then getting (i-j) valued card(non_face for j>(i-10))
-// 				ways_to_sum[i] += ways_to_sum[j]*P_non_face;
-// 			}		
-// 				// getting i-10 valued sum and then getting 10 valued card(face)
-// 			ways_to_sum[i] += ways_to_sum[i-10]*P_face;
-// 				// getting i-11 valued sum and then getting 11 valued card(non_face)			
-// 			ways_to_sum[i] += ways_to_sum[i-11]*P_non_face;
-// 		}
-// 		// else{
-// 		// 	for(int j=16;j>(i-10);j--){
-// 		// 		ways_to_sum[i] += ways_to_sum[j]*P_non_face;				
-// 		// 	}
-// 		// 	if((i-10)<17)
-// 		// 		ways_to_sum[i] += ways_to_sum[i-10]*P_face;
-// 		// 	if((i-11)<17)
-// 		// 		ways_to_sum[i] += ways_to_sum[i-11]*P_non_face;
-// 		// }
-// 	}
-// }
-
-// void calc_ways_to_sum_fixedA(){
-// 	ways_to_sum_fixedA[0] = 0;
-// 	//A
-// 	ways_to_sum_fixedA[1] = 1;
-// 	//AA and 2
-// 	ways_to_sum_fixedA[2] = ways_to_sum_fixedA[1]*P_non_face;
-
-// 	for(int i = 3;i<=27;i++){
-// 		// 3 to 9 sum cases
-// 		if(i<=9){
-// 			for(int j=i-1;j>0;j--){
-// 				// getting j valued sum and then getting (i-j) valued card(always non_face till i = 9)
-// 				ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;
-// 			}
-// 			// // getting i valued card only(Non face)
-// 			// ways_to_sum_fixedA[i] += P_non_face;
-// 		}
-// 		else if(i==10){
-// 			for(int j=i-1;j>0;j--){
-// 				// getting j valued sum and then getting (i-j) valued card(always non_face for i = 10)
-// 				ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;
-// 			}
-// 			// getting 10 valued card only
-// 			// ways_to_sum_fixedA[i] += P_face;
-// 		}
-// 		else if(i==11){
-// 			for(int j=i-1;j>(i-10);j--){
-// 				// getting j valued sum and then getting (i-j) valued card(non_face for j>(i-10))
-// 				ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;
-// 			}
-// 				// getting i-10 valued sum and then getting 10 valued card(face)
-// 			ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-10]*P_face;
-// 			// getting 11 valued card only
-// 			ways_to_sum_fixedA[i] += 1;
-// 		}
-// 		else{
-// 			for(int j=i-1;j>(i-10);j--){
-// 				// getting j valued sum and then getting (i-j) valued card(non_face for j>(i-10))
-// 				ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;
-// 			}		
-// 				// getting i-10 valued sum and then getting 10 valued card(face)
-// 			ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-10]*P_face;
-// 				// getting i-11 valued sum and then getting 11 valued card(non_face)			
-// 			ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-11]*P_non_face;
-// 		}
-// 		// else{
-// 		// 	for(int j=16;j>(i-10);j--){
-// 		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;				
-// 		// 	}
-// 		// 	if((i-10)<17)
-// 		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-10]*P_face;
-// 		// 	if((i-11)<17)
-// 		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-11]*P_non_face;
-// 		// }
-// 	}
-// }
-
-// double compute_reward(int start,int end){
-// 	double final = 0.0;
-
-// 	double temp = ways_to_sum[end];
-// 	for(int j = end-1;j>=start;j--){
-// 		if((end - j) == 10)
-// 			temp = temp - ways_to_sum[j]*P_face;
-// 		else	
-// 			temp = temp - ways_to_sum[j]*P_non_face;
-// 	}
-// 	final = temp;
-
-// 	return final;	
-// }
-
-// double calc_non_bust(int start,int end){
-// 	double final = 0.0;
-// 	final += ways_to_sum[start];
-	
-// 	for(int i= start + 1;i<=end;i++){
-// 		double temp = ways_to_sum[i];
-// 		for(int j = i-1;j>=start;j--){
-// 			temp = temp - ways_to_sum[j]*P_non_face;
-// 		}
-// 		final += temp;
-// 	}
-// 	return final;	
-// }
-
-// double compute_reward_fixedA(int start,int end){
-// 	double final = 0.0;
-
-// 	double temp = ways_to_sum_fixedA[end];
-// 	for(int j = end-1;j>=start;j--){
-// 		if((end - j) == 10)
-// 			temp = temp - ways_to_sum_fixedA[j]*P_face;
-// 		else	
-// 			temp = temp - ways_to_sum_fixedA[j]*P_non_face;
-// 	}
-// 	final = temp;
-
-// 	return final;	
-// }
-
-// double calc_non_bust_fixedA(int start,int end){
-// 	double final = 0.0;
-// 	final += ways_to_sum_fixedA[start];
-
-// 	for(int i= start + 1;i<=end;i++){
-// 		double temp = ways_to_sum_fixedA[i];
-// 		for(int j = i-1;j>=start;j--){
-// 			temp = temp - ways_to_sum_fixedA[j]*P_non_face;
-// 		}
-// 		final += temp;
-// 	}
-// 	return final;	
-// }
-
 
 State update_state_hit(State initial, int card){
 	State final;
@@ -340,98 +166,6 @@ State update_state_hit(State initial, int card){
 	}
 	return final;
 }
-
-// //reward function for taking stand or double on a given state
-// double reward(State s, Action a){
-// 	double ret = 0.0;
-// 	if(a==2){
-// 		int act_val;
-// 		double to_return = 0.0;
-// 		double ans = 0.0;
-// 		int diff_up = 21 - s.dealer;
-// 		int diff_down = 17 - s.dealer;
-// 		if(s.typeState == 3){
-// 			return -1.0;
-// 			// cout<<"Error\n";
-// 		}
-// 		else if(s.typeState == 0){
-// 			act_val = s.value;
-// 		}
-// 		else if(s.typeState == 1){
-// 			act_val = 11 + s.value;
-// 		}
-// 		else{
-// 			act_val = 2*s.value;
-// 		}
-// 		if(s.dealer !=1){
-
-// 			for(int i=(27-s.dealer);i>=(22-s.dealer);i--){
-// 				ans += compute_reward(17-s.dealer,i);
-// 			}
-// 			if(act_val<17){
-// 				//assuming dealer does not have A
-// 				//The dealer has to just not get busted to win
-// 				ans -= calc_non_bust(diff_down,diff_up);
-// 				return ans;
-// 				//return -(2*calc_non_bust(diff_down,diff_up) -1);
-// 			}
-// 			else if(act_val<=21){
-// 				// The dealer has to prevent busting and also to get more than us
-// 				//More than us case
-// 				diff_down = act_val - s.dealer + 1;
-// 				for(int i=diff_down;i<=diff_up;i++){
-// 					to_return = to_return - compute_reward(17-s.dealer,i);
-// 				}
-// 				//Less than us case
-// 				for(int i = (17-s.dealer);i<=(act_val - s.dealer - 1);i++){
-// 					to_return = to_return + compute_reward(17-s.dealer,i);
-// 				}
-// 				//Busted also added
-// 				ans += to_return;
-// 				return ans;
-// 				//return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
-// 			}
-// 		}
-// 		else{
-// 			for(int i=(27);i>=(22);i--){
-// 				ans += compute_reward_fixedA(17,i);
-// 			}
-
-// 			if(act_val<17){
-// 				//assuming dealer has A
-// 				//The dealer has to just not get busted to win
-// 				ans -= calc_non_bust_fixedA(17,21);
-// 				return ans;
-// 			}
-// 			else if(act_val<=21){
-// 				// The dealer has to prevent busting and also to get more than us
-// 				//More than us case
-// 				diff_down = act_val + 1;
-// 				diff_up = 21;
-// 				for(int i=diff_down;i<=diff_up;i++){
-// 					to_return = to_return - compute_reward_fixedA(17,i);
-// 				}
-// 				//Less than us case
-// 				for(int i = 17;i<=(act_val - 1);i++){
-// 					to_return = to_return + compute_reward_fixedA(17,i);
-// 				}
-// 				//Busted also added
-// 				ans += to_return;
-// 				return ans;
-// 			}
-// 		}
-// 	}
-// 	else if(a == 3){
-// 		for(int card = 1; card < 10; card++){
-// 			State final = update_state_hit(s, card);
-// 			ret += P_non_face*reward(final,2);
-// 		}
-// 		State final = update_state_hit(s, 10);
-// 		ret += P_face*reward(final,2);	
-// 		return ret;		
-// 	}	
-// 	cout<<"after reward \n";
-// }
 
 double get_val_hand(State s){
 	switch(s.typeState){
@@ -668,6 +402,27 @@ double val_hit(State s){
 	return sum;
 }
 
+double reward_split_aces(State initial){
+	double rew = 0.0;
+	for(int card1 = 1; card1 <= 9; card1++){
+		State final1 = update_state_split(initial, card1);
+		for(int card2 = 1; card2 <= 9; card2++){
+			State final2 = update_state_split(initial, card2);
+			rew += P_non_face*P_non_face*(reward_new(final1, 2) + reward_new(final2, 2));
+		}
+		State final2 = update_state_split(initial, 10);
+		rew += P_non_face*P_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	}
+	State final1 = update_state_split(initial, 10);
+	for(int card2 = 1; card2 <= 9; card2++){
+		State final2 = update_state_split(initial, card2);
+		rew += P_face*P_non_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	}
+	State final2 = update_state_split(initial, 10);
+	rew += P_face*P_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	return rew;
+}
+
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
 	double max_val = -100.0;
@@ -689,6 +444,11 @@ double bellmanBackup(State s){
 	/* calculating V_n(s) for split */
 	if(s.typeState == 2 && s.start == 0){
 		val_split_val = val_split(s);
+	}
+
+	/* spltting aces handled seperately */
+	if(s.typeState == 2 && s.start == 0 && s.value == 1){
+		val_split_val = reward_split_aces(s);
 	}
 
 	/* calculating V_n(s) for hit */
@@ -733,6 +493,11 @@ Action setPolicy(State s){
 		val_split_val = val_split(s);
 	}
 
+	/* spltting aces handled seperately */
+	if(s.typeState == 2 && s.start == 0 && s.value == 1){
+		val_split_val = reward_split_aces(s);
+	}
+
 	/* calculating V_n(s) for hit */
 	val_hit_val = val_hit(s);
 	
@@ -748,6 +513,14 @@ Action setPolicy(State s){
 	max_val = max(max_val, val_hit_val);
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
+
+	if(s.typeState == 2 && s.value == 1 && s.dealer == 1 && s.start == 0){
+		cout << "AA, A\n";
+		cout << "split : " << val_split_val << "\n";
+		cout << "hit : " << val_hit_val << "\n";
+		cout << "stand : " << val_stand << "\n";
+		cout << "double : " << val_double << "\n";
+	}
 
 	if((max_val == val_split_val) || (std::abs(max_val- val_split_val)<std::abs(std::min(max_val,val_split_val))*std::numeric_limits<double>::epsilon()))
 		return 1;
@@ -878,8 +651,6 @@ int main(int argc, char **argv){
 	// 	}
 	// }
 
-	//calc_ways_to_sum();
-	//calc_ways_to_sum_fixedA();
 	valueIteration();
 	output();
 
