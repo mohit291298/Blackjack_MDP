@@ -13,7 +13,7 @@
 using namespace std;
 typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
 #define NUM_STATES 731
-#define EPSILON 0.05
+#define EPSILON 0.00001
 
 //global variables
 
@@ -95,14 +95,15 @@ string action_to_string(Action a){
 		return "D";
 }
 
-double calc_ways_to_sum(){
+void calc_ways_to_sum(){
 	ways_to_sum[0] = 0;
+	// cout<<P_face<<"\n";
 	//A
 	ways_to_sum[1] = P_non_face;
 	//AA and 2
 	ways_to_sum[2] = ways_to_sum[1]*P_non_face + P_non_face;
 
-	for(int i = 3;i<=21;i++){
+	for(int i = 3;i<=27;i++){
 		// 3 to 9 sum cases
 		if(i<=9){
 			for(int j=i-1;j>0;j--){
@@ -140,17 +141,26 @@ double calc_ways_to_sum(){
 				// getting i-11 valued sum and then getting 11 valued card(non_face)			
 			ways_to_sum[i] += ways_to_sum[i-11]*P_non_face;
 		}
+		// else{
+		// 	for(int j=16;j>(i-10);j--){
+		// 		ways_to_sum[i] += ways_to_sum[j]*P_non_face;				
+		// 	}
+		// 	if((i-10)<17)
+		// 		ways_to_sum[i] += ways_to_sum[i-10]*P_face;
+		// 	if((i-11)<17)
+		// 		ways_to_sum[i] += ways_to_sum[i-11]*P_non_face;
+		// }
 	}
 }
 
-double calc_ways_to_sum_fixedA(){
+void calc_ways_to_sum_fixedA(){
 	ways_to_sum_fixedA[0] = 0;
 	//A
 	ways_to_sum_fixedA[1] = 1;
 	//AA and 2
 	ways_to_sum_fixedA[2] = ways_to_sum_fixedA[1]*P_non_face;
 
-	for(int i = 3;i<=21;i++){
+	for(int i = 3;i<=27;i++){
 		// 3 to 9 sum cases
 		if(i<=9){
 			for(int j=i-1;j>0;j--){
@@ -188,6 +198,15 @@ double calc_ways_to_sum_fixedA(){
 				// getting i-11 valued sum and then getting 11 valued card(non_face)			
 			ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-11]*P_non_face;
 		}
+		// else{
+		// 	for(int j=16;j>(i-10);j--){
+		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[j]*P_non_face;				
+		// 	}
+		// 	if((i-10)<17)
+		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-10]*P_face;
+		// 	if((i-11)<17)
+		// 		ways_to_sum_fixedA[i] += ways_to_sum_fixedA[i-11]*P_non_face;
+		// }
 	}
 }
 
@@ -196,7 +215,10 @@ double compute_reward(int start,int end){
 
 	double temp = ways_to_sum[end];
 	for(int j = end-1;j>=start;j--){
-		temp = temp - ways_to_sum[j]*P_non_face;
+		if((end - j) == 10)
+			temp = temp - ways_to_sum[j]*P_face;
+		else	
+			temp = temp - ways_to_sum[j]*P_non_face;
 	}
 	final = temp;
 
@@ -222,7 +244,10 @@ double compute_reward_fixedA(int start,int end){
 
 	double temp = ways_to_sum_fixedA[end];
 	for(int j = end-1;j>=start;j--){
-		temp = temp - ways_to_sum_fixedA[j]*P_non_face;
+		if((end - j) == 10)
+			temp = temp - ways_to_sum_fixedA[j]*P_face;
+		else	
+			temp = temp - ways_to_sum_fixedA[j]*P_non_face;
 	}
 	final = temp;
 
@@ -242,6 +267,7 @@ double calc_non_bust_fixedA(int start,int end){
 	}
 	return final;	
 }
+
 
 State update_state_hit(State initial, int card){
 	State final;
@@ -320,7 +346,8 @@ double reward(State s, Action a){
 	double ret = 0.0;
 	if(a==2){
 		int act_val;
-		int to_return = 0.0;
+		double to_return = 0.0;
+		double ans = 0.0;
 		int diff_up = 21 - s.dealer;
 		int diff_down = 17 - s.dealer;
 		if(s.typeState == 3){
@@ -337,10 +364,16 @@ double reward(State s, Action a){
 			act_val = 2*s.value;
 		}
 		if(s.dealer !=1){
+
+			for(int i=(27-s.dealer);i>=(22-s.dealer);i--){
+				ans += compute_reward(17-s.dealer,i);
+			}
 			if(act_val<17){
 				//assuming dealer does not have A
 				//The dealer has to just not get busted to win
-				return -(2*calc_non_bust(diff_down,diff_up) -1);
+				ans -= calc_non_bust(diff_down,diff_up);
+				return ans;
+				//return -(2*calc_non_bust(diff_down,diff_up) -1);
 			}
 			else if(act_val<=21){
 				// The dealer has to prevent busting and also to get more than us
@@ -350,18 +383,25 @@ double reward(State s, Action a){
 					to_return = to_return - compute_reward(17-s.dealer,i);
 				}
 				//Less than us case
-				for(int i = 17-s.dealer;i<=(act_val - s.dealer - 1);i++){
+				for(int i = (17-s.dealer);i<=(act_val - s.dealer - 1);i++){
 					to_return = to_return + compute_reward(17-s.dealer,i);
 				}
 				//Busted also added
-				return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
+				ans += to_return;
+				return ans;
+				//return to_return + (1- calc_non_bust(17 - s.dealer,diff_up));
 			}
 		}
 		else{
+			for(int i=(27);i>=(22);i--){
+				ans += compute_reward_fixedA(17,i);
+			}
+
 			if(act_val<17){
 				//assuming dealer has A
 				//The dealer has to just not get busted to win
-				return -(2*calc_non_bust_fixedA(17,21) -1);
+				ans -= calc_non_bust_fixedA(17,21);
+				return ans;
 			}
 			else if(act_val<=21){
 				// The dealer has to prevent busting and also to get more than us
@@ -376,7 +416,8 @@ double reward(State s, Action a){
 					to_return = to_return + compute_reward_fixedA(17,i);
 				}
 				//Busted also added
-				return to_return + (1- calc_non_bust_fixedA(17,diff_up));
+				ans += to_return;
+				return ans;
 			}
 		}
 	}
@@ -389,7 +430,7 @@ double reward(State s, Action a){
 		ret += P_face*reward(final,2);	
 		return ret;		
 	}	
-	// cout<<"after reward \n";
+	cout<<"after reward \n";
 }
 
 double get_val_hand(State s){
@@ -708,11 +749,11 @@ Action setPolicy(State s){
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
 
-	if(max_val == val_split_val)
+	if((max_val == val_split_val) || (std::abs(max_val- val_split_val)<std::abs(std::min(max_val,val_split_val))*std::numeric_limits<double>::epsilon()))
 		return 1;
-	else if(max_val == val_hit_val)
+	else if((max_val == val_hit_val) || (std::abs(max_val- val_hit_val)<std::abs(std::min(max_val,val_hit_val))*std::numeric_limits<double>::epsilon()))
 		return 0;
-	else if(max_val == val_stand)
+	else if((max_val == val_stand) || (std::abs(max_val- val_stand)<std::abs(std::min(max_val,val_stand))*std::numeric_limits<double>::epsilon()))
 		return 2;
 	else
 		return 3;
