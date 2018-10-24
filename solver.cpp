@@ -542,7 +542,7 @@ double reward_new(State s, Action a){
 		return -1.0;
 	}
 	if(s.typeState == 4){
-		return 2.5*(1 - P_sum_to(22, s.dealer));
+		return 1.5*(1 - P_sum_to(22, s.dealer));
 	}
 	double rew = 0.0;
 	double val_hand = get_val_hand(s);
@@ -608,7 +608,7 @@ State update_state_split(State initial, int card_new){
 			else if(initial.value != 1){
 				if(initial.value == 10){
 					final.value = 21;
-					final.typeState = 0;
+					final.typeState = 4;
 				}
 				else{
 					final.value = initial.value;
