@@ -13,7 +13,7 @@
 using namespace std;
 typedef int Action;		//0 << hit, 1 << split, 2 << stand, 3 << double
 #define NUM_STATES 731
-#define EPSILON 0.001
+#define EPSILON 0.00001
 
 //global variables
 
@@ -627,6 +627,27 @@ double val_hit(State s){
 	return sum;
 }
 
+double reward_split_aces(State initial){
+	double rew = 0.0;
+	for(int card1 = 1; card1 <= 9; card1++){
+		State final1 = update_state_split(initial, card1);
+		for(int card2 = 1; card2 <= 9; card2++){
+			State final2 = update_state_split(initial, card2);
+			rew += P_non_face*P_non_face*(reward_new(final1, 2) + reward_new(final2, 2));
+		}
+		State final2 = update_state_split(initial, 10);
+		rew += P_non_face*P_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	}
+	State final1 = update_state_split(initial, 10);
+	for(int card2 = 1; card2 <= 9; card2++){
+		State final2 = update_state_split(initial, card2);
+		rew += P_face*P_non_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	}
+	State final2 = update_state_split(initial, 10);
+	rew += P_face*P_face*(reward_new(final1, 2) + reward_new(final2, 2));
+	return rew;
+}
+
 //returns V'(s) using previousy computed state values
 double bellmanBackup(State s){
 	double max_val = -100.0;
@@ -648,6 +669,11 @@ double bellmanBackup(State s){
 	/* calculating V_n(s) for split */
 	if(s.typeState == 2 && s.start == 0){
 		val_split_val = val_split(s);
+	}
+
+	/* spltting aces handled seperately */
+	if(s.typeState == 2 && s.start == 0 && s.value == 1){
+		val_split_val = reward_split_aces(s);
 	}
 
 	/* calculating V_n(s) for hit */
@@ -692,6 +718,11 @@ Action setPolicy(State s){
 		val_split_val = val_split(s);
 	}
 
+	/* spltting aces handled seperately */
+	if(s.typeState == 2 && s.start == 0 && s.value == 1){
+		val_split_val = reward_split_aces(s);
+	}
+
 	/* calculating V_n(s) for hit */
 	val_hit_val = val_hit(s);
 	
@@ -707,6 +738,14 @@ Action setPolicy(State s){
 	max_val = max(max_val, val_hit_val);
 	max_val = max(max_val, val_stand);
 	max_val = max(max_val, val_double);
+
+	if(s.typeState == 2 && s.value == 1 && s.dealer == 1 && s.start == 0){
+		cout << "AA, A\n";
+		cout << "split : " << val_split_val << "\n";
+		cout << "hit : " << val_hit_val << "\n";
+		cout << "stand : " << val_stand << "\n";
+		cout << "double : " << val_double << "\n";
+	}
 
 	if(max_val == val_split_val)
 		return 1;

@@ -30,4 +30,4 @@ A9	S S S S S S S S S S
 88	P P P P P P P P H H
 99	P P P P P S P P S S
 1010	S P P P P S S S S S
-AA	P P P P P P P P P P
+AA	P P P P P P P P P H
