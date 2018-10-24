@@ -512,7 +512,8 @@ double reward_new(State s, Action a){
 	State final;
 	switch(a){
 		case 2:
-			rew += P_sum_to(22, s.dealer)*1;
+			rew += P_sum_to(23, s.dealer)*1;
+			rew += P_sum_to(22, s.dealer)*-1;
 			if(val_hand >= 17){
 				for(int i = 17; i < val_hand; i++){
 					rew += P_sum_to(i, s.dealer)*1;
@@ -653,11 +654,11 @@ double bellmanBackup(State s){
 	val_hit_val = val_hit(s);
 	
 	/* calculating V_n(s) for stand */
-	val_stand = reward(s, 2);
+	val_stand = reward_new(s, 2);
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward(s, 3);
+		val_double = 2*reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
@@ -695,11 +696,11 @@ Action setPolicy(State s){
 	val_hit_val = val_hit(s);
 	
 	/* calculating V_n(s) for stand */
-	val_stand = reward(s, 2);
+	val_stand = reward_new(s, 2);
 
 	/* calculating V_n(s) for double */	
 	if(s.start == 0){
-		val_double = 2*reward(s, 3);
+		val_double = 2*reward_new(s, 3);
 	}
 
 	max_val = max(max_val, val_split_val);
@@ -823,17 +824,17 @@ int main(int argc, char **argv){
 	P_face = P;
 	P_non_face = (1-P)/9;
 
-	for(int val = 17; val <= 23; val++){
+	/*for(int val = 17; val <= 23; val++){
 		for(int d = 1; d <= 10; d++){
 			cout << P_sum_to(val, d) << " ";
 		}
 		cout << "\n";
-	}
+	}*/
 
 	//calc_ways_to_sum();
 	//calc_ways_to_sum_fixedA();
-	//valueIteration();
-	//output();
+	valueIteration();
+	output();
 
 	return 0;
 }
