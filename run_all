@@ -1,0 +1,33 @@
+#!/bin/bash
+mkdir -p output
+./run.sh 0.103 
+mv "Policy.txt" "./output/1.txt"
+./run.sh 0.235 
+mv "Policy.txt" "./output/2.txt"
+./run.sh 0.001 
+mv "Policy.txt" "./output/3.txt"
+./run.sh 0.023 
+mv "Policy.txt" "./output/4.txt"
+./run.sh 0.345 
+mv "Policy.txt" "./output/5.txt"
+./run.sh 0.459 
+mv "Policy.txt" "./output/6.txt"
+./run.sh 0.467 
+mv "Policy.txt" "./output/7.txt"
+./run.sh 0.266 
+mv "Policy.txt" "./output/8.txt"
+./run.sh 0.003 
+mv "Policy.txt" "./output/9.txt"
+./run.sh 0.111 
+mv "Policy.txt" "./output/10.txt"
+./run.sh 0.456 
+mv "Policy.txt" "./output/11.txt"
+./run.sh 0.333 
+mv "Policy.txt" "./output/12.txt"
+./run.sh 0.222 
+mv "Policy.txt" "./output/13.txt"
+./run.sh 0.239 
+mv "Policy.txt" "./output/14.txt"
+./run.sh 0.016 
+mv "Policy.txt" "./output/15.txt"
+zip -r output.zip ./output
